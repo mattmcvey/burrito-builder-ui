@@ -33,15 +33,15 @@ describe('Burrito Builder', () => {
   })
 
   it('should not add an order to the page if nothing is selected', () => {
-    cy.get('button').last().click().get('section').children().should('have.length', '3')
+    cy.get('.submit-order').last().click().get('section').children().should('have.length', '3')
   })
 
   it('should not add an order to the page if ingredients arent selected', () => {
-    cy.get('button').first().click().get('button').last().click().get('section').children().should('have.length', '3')
+    cy.get('button').first().click().get('.submit-order').click().get('section').children().should('have.length', '3')
   })
 
   it('should not add an order to the page if no name is input', () => {
-    cy.get('input').type('Matt').get('button').last().click().get('section').children().should('have.length', '3')
+    cy.get('input').type('Matt').get('.submit-order').click().get('section').children().should('have.length', '3')
   })
 
   it('should display your order', () => {
@@ -61,18 +61,27 @@ describe('Burrito Builder', () => {
       statusCode: 201,
       body: {'id': 4, 'name': 'Matt', 'ingredients': ['beans']},
     })
-    cy.get('input').type('Matt').get('button').first().click().get('button').last().click().get('section').children().should('have.length', '4')
+    cy.get('input').type('Matt').get('button').first().click().get('.submit-order').click().get('section').children().should('have.length', '4')
   })
 
-  it('should be able to add as many ingredients as you want', () => {
+  it('should be able to add multiple ingredients', () => {
     cy.intercept({
       method: 'POST',
       url: 'http://localhost:3001/api/v1/orders'
     },
     {
       statusCode: 201,
-      body: {'id': 4, 'name': 'Matt', 'ingredients': ['beans', 'steak', 'carnitas', 'sofritas', 'lettuce', 'queso fresco', 'pico de gallo', 'hot sauce', 'guacamole', 'jalapenos', 'cilantro', 'sour cream']}
+      body: {'id': 4, 'name': 'Matt', 'ingredients': ['beans', 'steak', 'carnitas']}
     })
-    cy.get('input').type('Matt').get('button').click({ multiple: true }).get('div').last().should('contain', 'beans').and('contain','steak').and('contain','carnitas').and('contain','sofritas').and('contain','lettuce').and('contain','queso fresco').and('contain','pico de gallo').and('contain','hot sauce').and('contain','guacamole').and('contain','jalapenos').and('contain','cilantro').and('contain','sour cream')
+    cy.get('input').type('Matt').get('button').first().click().next().click().next().click().get('.submit-order').click().get('div').last().should('contain', 'beans').and('contain','steak').and('contain','carnitas')
+  })
+
+  it('should delete orders if cancel button is pushed', () => {
+    cy.intercept({
+      method: 'DELETE',
+      url: 'http://localhost:3001/api/v1/orders'
+    }, {
+      statusCode: 201
+    })
   })
 })
