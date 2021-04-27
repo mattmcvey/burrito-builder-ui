@@ -11,7 +11,7 @@ class App extends Component {
     super();
     this.state = {
       orders: [],
-      error: ''
+      error: false
     }
   }
 
@@ -24,8 +24,12 @@ class App extends Component {
   }
 
   addOrder = (newOrder) => {
-    postOrders(newOrder)
-    .then(order => this.setState({ orders: [...this.state.orders, order]}))
+    if(newOrder === 'error') {
+      this.setState({ error: true})
+    } else {
+      postOrders(newOrder)
+      .then(order => this.setState({ orders: [...this.state.orders, order]}))
+    }
   }
 
   deletOrder = (id) => {
@@ -43,7 +47,7 @@ class App extends Component {
           <h1>Burrito Builder</h1>
           <OrderForm addOrder={this.addOrder}/>
         </header>
-
+        {this.state.error && <h3>Name or ingredient is missing. Please update</h3>}
         <Orders orders={this.state.orders} deletOrder={this.deletOrder}/>
       </main>
     );

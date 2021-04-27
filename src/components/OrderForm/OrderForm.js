@@ -23,6 +23,7 @@ class OrderForm extends Component {
     e.preventDefault();
     const { name, ingredients } = this.state
     if(name === '' || !ingredients.length) {
+      this.props.addOrder('error')
       return
     } else {
       const newOrder = {
