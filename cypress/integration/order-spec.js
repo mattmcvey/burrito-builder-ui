@@ -83,5 +83,8 @@ describe('Burrito Builder', () => {
     }, {
       statusCode: 201
     })
+    cy.get('input').type('Matt').get('button').first().click().next().click().next().click().get('.submit-order').click()
+    .get('section').children().should('have.length', '4')
+    cy.get('div').last().get('button').last().click().get('section').children().should('have.length', '3')
   })
 })
